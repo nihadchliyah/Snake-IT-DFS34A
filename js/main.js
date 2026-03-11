@@ -1,33 +1,30 @@
-let snake = document.getElementById("snake");
 let gameContainer = document.getElementById("game-container");
 let lastDirection = 'right';
 
-const containerSize = [gameContainer.style.width ? parseInt(gameContainer.style.width) : 0, gameContainer.style.height ? parseInt(gameContainer.style.height) : 0];
+const containerSize = [
+    gameContainer.style.width  ? parseInt(gameContainer.style.width)  : 0,
+    gameContainer.style.height ? parseInt(gameContainer.style.height) : 0
+];
 const snakeSize = 50;
+
+
+let snake    = [{ x: 0, y: 0 }];
+let segments = [];
+
 setInterval(loopGame, 300);
 startGame();
 
-function startGame() {
-    generateApple();
-}
 
-function resetSnake() {
-    snake.style.left = "0px";
-    snake.style.top = "0px";
-    lastDirection = 'right';
+function startGame() {
+    snake    = [{ x: 0, y: 0 }];
+    segments = [];
+    document.querySelectorAll(".segment, .apple").forEach(el => el.remove());
+    renderSnake();
+    generateApple();
 }
 
 function resetGame() {
-    resetSnake();
-    resetApple();
-}
-
-function resetApple() {
-    const apples = document.getElementsByClassName("apple");
-    for (let apple of apples) {
-        gameContainer.removeChild(apple);
-    }
-    generateApple();
+    startGame();
 }
 
 function loopGame() {
@@ -38,20 +35,13 @@ function loopGame() {
     }
 }
 
+
 document.addEventListener("keydown", function(event) {
     switch (event.key) {
-        case "ArrowLeft":
-            saveDirection('left');
-            break;
-        case "ArrowRight":
-            saveDirection('right');
-            break;
-        case "ArrowUp":
-            saveDirection('up');
-            break;
-        case "ArrowDown":
-            saveDirection('down');
-            break;
+        case "ArrowLeft":  saveDirection('left');  break;
+        case "ArrowRight": saveDirection('right'); break;
+        case "ArrowUp":    saveDirection('up');    break;
+        case "ArrowDown":  saveDirection('down');  break;
     }
 });
 
@@ -59,58 +49,114 @@ function saveDirection(event) {
     lastDirection = event;
 }
 
-function moveSnake(event) {
 
-    if (event == 'left') {
-        snake.style.left = (parseInt(snake.style.left ? snake.style.left : 0) - snakeSize) + "px";
-    } else if (event == 'right') {
-        snake.style.left = (parseInt(snake.style.left ? snake.style.left : 0) + snakeSize) + "px";
-    } else if (event == 'up') {
-        snake.style.top = (parseInt(snake.style.top ? snake.style.top : 0) - snakeSize) + "px";
-    } else if (event == 'down') {
-        snake.style.top = (parseInt(snake.style.top ? snake.style.top : 0) + snakeSize) + "px";
+function moveSnake(dir) {
+
+    let snakeX = snake[0].x;
+    let snakeY = snake[0].y;
+
+    if (dir === 'left')  snakeX -= snakeSize;
+    if (dir === 'right') snakeX += snakeSize;
+    if (dir === 'up')    snakeY -= snakeSize;
+    if (dir === 'down')  snakeY += snakeSize;
+
+    let newHead = { x: snakeX, y: snakeY };
+
+  
+    const apples = document.getElementsByClassName("apple");
+    let ate = false;
+    for (let apple of apples) {
+        if (snakeX === parseInt(apple.style.left) && snakeY === parseInt(apple.style.top)) {
+            ate = true;
+            break;
+        }
     }
+
+    if (ate) {
+       
+    } else {
+    
+        const tailDOM = segments.pop();
+        tailDOM.remove();
+        snake.pop();
+    }
+
+    
+    snake.unshift(newHead);
+    addHeadDOM(newHead);
+}
+
+
+function addHeadDOM(pos) {
+    
+    if (segments.length > 0) {
+        segments[0].style.backgroundColor = 'green';
+    }
+
+    const el = document.createElement("div");
+    el.classList.add("segment");
+    el.style.position        = "absolute";
+    el.style.width           = snakeSize + "px";
+    el.style.height          = snakeSize + "px";
+    el.style.backgroundColor = "lime"; 
+    el.style.left            = pos.x + "px";
+    el.style.top             = pos.y + "px";
+    gameContainer.appendChild(el);
+
+    segments.unshift(el);
+}
+
+function renderSnake() {
+    snake.forEach((pos, i) => {
+        const el = document.createElement("div");
+        el.classList.add("segment");
+        el.style.position        = "absolute";
+        el.style.width           = snakeSize + "px";
+        el.style.height          = snakeSize + "px";
+        el.style.backgroundColor = i === 0 ? "lime" : "green";
+        el.style.left            = pos.x + "px";
+        el.style.top             = pos.y + "px";
+        gameContainer.appendChild(el);
+        segments.push(el);
+    });
 }
 
 
 function collideWithWall() {
-
-    const snakeRect = snake.getBoundingClientRect();
-    const containerRect = gameContainer.getBoundingClientRect();
-
-    if (snakeRect.left < containerRect.left || snakeRect.right > containerRect.right ||
-        snakeRect.top < containerRect.top || snakeRect.bottom > containerRect.bottom) {
-        return true;
-    }
-    return false;
+    const head = snake[0];
+    return (
+        head.x < 0 || head.x + snakeSize > containerSize[0] ||
+        head.y < 0 || head.y + snakeSize > containerSize[1]
+    );
 }
-
-
 
 function GameOver() {
     alert("Game Over!");
     resetGame();
 }
 
+
 function generateApple() {
     const apple = document.createElement("div");
     apple.classList.add("apple");
     apple.style.left = Math.floor(Math.random() * (containerSize[0] / snakeSize)) * snakeSize + "px";
-    apple.style.top = Math.floor(Math.random() * (containerSize[1] / snakeSize)) * snakeSize + "px";
+    apple.style.top  = Math.floor(Math.random() * (containerSize[1] / snakeSize)) * snakeSize + "px";
     gameContainer.appendChild(apple);
 }
 
 function checkEatApple() {
-    const snakeRect = snake.getBoundingClientRect();
+    const head   = snake[0];
     const apples = document.getElementsByClassName("apple");
 
     for (let apple of apples) {
-        const appleRect = apple.getBoundingClientRect();
-        if (snakeRect.left < appleRect.right && snakeRect.right > appleRect.left &&
-            snakeRect.top < appleRect.bottom && snakeRect.bottom > appleRect.top) {
+        const ax = parseInt(apple.style.left);
+        const ay = parseInt(apple.style.top);
+
+        if (head.x === ax && head.y === ay) {
             gameContainer.removeChild(apple);
             generateApple();
-            // Here you would also add code to grow the snake
+            
+            break;
         }
     }
 }
