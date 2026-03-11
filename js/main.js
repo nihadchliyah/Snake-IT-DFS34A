@@ -7,17 +7,18 @@ const containerSize = [
 ];
 const snakeSize = 50;
 
-
-let snake    = [{ x: 0, y: 0 }];
-let segments = [];
+let snake         = [{ x: 0, y: 0 }];
+let segments      = [];
+let pendingGrowth = false;
 
 setInterval(loopGame, 300);
 startGame();
 
-
 function startGame() {
-    snake    = [{ x: 0, y: 0 }];
-    segments = [];
+    document.getElementById("snake").style.display = "none";
+    snake         = [{ x: 0, y: 0 }];
+    segments      = [];
+    pendingGrowth = false;
     document.querySelectorAll(".segment, .apple").forEach(el => el.remove());
     renderSnake();
     generateApple();
@@ -35,7 +36,6 @@ function loopGame() {
     }
 }
 
-
 document.addEventListener("keydown", function(event) {
     switch (event.key) {
         case "ArrowLeft":  saveDirection('left');  break;
@@ -49,9 +49,7 @@ function saveDirection(event) {
     lastDirection = event;
 }
 
-
 function moveSnake(dir) {
-
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
 
@@ -60,49 +58,31 @@ function moveSnake(dir) {
     if (dir === 'up')    snakeY -= snakeSize;
     if (dir === 'down')  snakeY += snakeSize;
 
-    let newHead = { x: snakeX, y: snakeY };
-
-  
-    const apples = document.getElementsByClassName("apple");
-    let ate = false;
-    for (let apple of apples) {
-        if (snakeX === parseInt(apple.style.left) && snakeY === parseInt(apple.style.top)) {
-            ate = true;
-            break;
-        }
-    }
-
-    if (ate) {
-       
-    } else {
-    
+    if (!pendingGrowth) {
         const tailDOM = segments.pop();
         tailDOM.remove();
         snake.pop();
     }
+    pendingGrowth = false;
 
-    
+    let newHead = { x: snakeX, y: snakeY };
     snake.unshift(newHead);
     addHeadDOM(newHead);
 }
 
-
 function addHeadDOM(pos) {
-    
     if (segments.length > 0) {
         segments[0].style.backgroundColor = 'green';
     }
-
     const el = document.createElement("div");
     el.classList.add("segment");
     el.style.position        = "absolute";
     el.style.width           = snakeSize + "px";
     el.style.height          = snakeSize + "px";
-    el.style.backgroundColor = "lime"; 
+    el.style.backgroundColor = "lime";
     el.style.left            = pos.x + "px";
     el.style.top             = pos.y + "px";
     gameContainer.appendChild(el);
-
     segments.unshift(el);
 }
 
@@ -121,7 +101,6 @@ function renderSnake() {
     });
 }
 
-
 function collideWithWall() {
     const head = snake[0];
     return (
@@ -134,7 +113,6 @@ function GameOver() {
     alert("Game Over!");
     resetGame();
 }
-
 
 function generateApple() {
     const apple = document.createElement("div");
@@ -154,8 +132,8 @@ function checkEatApple() {
 
         if (head.x === ax && head.y === ay) {
             gameContainer.removeChild(apple);
+            pendingGrowth = true;
             generateApple();
-            
             break;
         }
     }
