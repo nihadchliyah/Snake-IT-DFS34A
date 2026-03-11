@@ -1,41 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Snake</title>
     <link rel="stylesheet" href="css/main.css">
-
 </head>
-
 <body>
-    <div id="game-container" style="width: 400px; height: 400px;">
-        <div id="snake"></div>
+
+    <div id="layout">
+        <div id="game-col">
+            <div id="game-container" style="width: 400px; height: 400px;">
+                <div id="snake"></div>
+            </div>
+            <div id="ui">
+                <div id="score-box">
+                    <span class="label">SCORE</span>
+                    <span id="score-display">0</span>
+                </div>
+                <div id="golden-timer-wrap">
+                    <span class="label">BONUS</span>
+                    <div id="golden-timer-track">
+                        <div id="golden-timer-bar"></div>
+                    </div>
+                </div>
+                <div id="size-box">
+                    <span class="label">TAILLE</span>
+                    <span id="size-display">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="dpad">
+            <div class="dpad-row">
+                <button id="btn-up" onclick="saveDirection('up')">&#9650;</button>
+            </div>
+            <div class="dpad-row">
+                <button id="btn-left" onclick="saveDirection('left')">&#9668;</button>
+                <div class="dpad-center"></div>
+                <button id="btn-right" onclick="saveDirection('right')">&#9658;</button>
+            </div>
+            <div class="dpad-row">
+                <button id="btn-down" onclick="saveDirection('down')">&#9660;</button>
+            </div>
+        </div>
     </div>
-    <button onclick="saveDirection('left')"><</button>
-    <button onclick="saveDirection('right')">></button>
-    <button onclick="saveDirection('up')">^</button>
-    <button onclick="saveDirection('down')">v</button>
+
+    <script src="js/main.js"></script>
 </body>
-
-<script src="js/main.js"></script>
 </html>
-
-
-
-<div class="login-container" style="visibility: hidden;">
-        <h2>Se connecter</h2>
-        <form method="POST" action="login.php">
-            <div class="form-group">
-                <label for="username">Nom d'utilisateur :</label>
-                <input type="text" id="username" name="username" required="">
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="password" required="">
-            </div>
-            <button type="submit">Connexion</button>
-        </form>
-        <a href="index.html">Retour au formulaire</a>
-    </div>
