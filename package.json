@@ -1,0 +1,24 @@
+{
+  "name": "snake-it-dfs34a",
+  "version": "1.0.0",
+  "description": "Un jeu Snake classique développé en HTML/CSS/JavaScript vanilla, avec une esthétique rétro néon.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nihadchliyah/Snake-IT-DFS34A.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nihadchliyah/Snake-IT-DFS34A/issues"
+  },
+  "homepage": "https://github.com/nihadchliyah/Snake-IT-DFS34A#readme",
+  "dependencies": {
+    "brain.js": "^2.0.0-beta.24"
+  }
+}
