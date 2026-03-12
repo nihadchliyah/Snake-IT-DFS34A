@@ -1,4 +1,4 @@
-# Snake-IT-DFS34A
+# Snake
 
 Un jeu Snake classique développé en HTML/CSS/JavaScript vanilla, avec une esthétique rétro néon.
 
